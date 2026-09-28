@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BookMyRoom - Guest House Booking</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">B</span>
+    <div>
+      <strong>BookMyRoom</strong>
+      <small>Guest House Booking System</small>
+    </div>
+  </div>
+  <nav id="nav">
+    <button data-page="dashboard">Dashboard</button>
+    <button data-page="rooms">Rooms</button>
+    <button data-page="guests">Guests</button>
+    <button data-page="availability">Availability</button>
+    <button data-page="book">New Booking</button>
+    <button data-page="bookings">Bookings</button>
+    <button data-page="report">Report</button>
+  </nav>
+</header>
+
+<main>
+  <div id="banner"></div>
+
+  <!-- ===================== DASHBOARD ===================== -->
+  <section id="dashboard" class="page">
+    <div class="page-head">
+      <div>
+        <h1>Dashboard</h1>
+        <p class="muted" id="todayText"></p>
+      </div>
+      <button class="btn" data-goto="book">+ New Booking</button>
+    </div>
+
+    <div class="cards">
+      <div class="stat blue"><span>Total rooms</span><strong id="cRooms">-</strong></div>
+      <div class="stat green"><span>Rooms in service</span><strong id="cInService">-</strong></div>
+      <div class="stat purple"><span>Total guests</span><strong id="cGuests">-</strong></div>
+      <div class="stat teal"><span>Active bookings</span><strong id="cActive">-</strong></div>
+      <div class="stat red"><span>Cancelled bookings</span><strong id="cCancelled">-</strong></div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <h3>Occupancy tonight</h3>
+        <div class="big" id="occPercent">-</div>
+        <div class="progress"><div id="occBar"></div></div>
+        <p class="muted" id="occText"></p>
+      </div>
+      <div class="panel">
+        <h3>This month <span class="muted" id="monthLabel"></span></h3>
+        <dl class="details">
+          <div><dt>Confirmed bookings</dt><dd id="mConfirmed">-</dd></div>
+          <div><dt>Occupied room nights</dt><dd id="mNights">-</dd></div>
+          <div><dt>Revenue</dt><dd id="mRevenue">-</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Upcoming check-ins</h3>
+      <div id="upcomingList"></div>
+    </div>
+  </section>
+
+  <!-- ===================== ROOMS ===================== -->
+  <section id="rooms" class="page">
+    <div class="page-head"><div><h1>Rooms</h1><p class="muted">Add and manage guest house rooms</p></div></div>
+
+    <div class="panel">
+      <h3>Add a room</h3>
+      <div id="roomError" class="form-error"></div>
+      <form id="roomForm" class="form" novalidate>
+        <label>Room number<input name="roomNumber" maxlength="10" placeholder="e.g. 101"></label>
+        <label>Room type
+          <select name="roomType">
+            <option value="SINGLE">SINGLE</option>
+            <option value="DOUBLE" selected>DOUBLE</option>
+            <option value="DELUXE">DELUXE</option>
+          </select>
+        </label>
+        <label>Capacity (guests)<input name="capacity" type="number" min="1" placeholder="e.g. 2"></label>
+        <label>Rate per night (&#8377;)<input name="ratePerNight" type="number" min="1" step="0.01" placeholder="e.g. 1500"></label>
+        <label class="check"><input type="checkbox" name="available" checked> Room is in service</label>
+        <div class="form-actions"><button class="btn">Add Room</button></div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <div class="toolbar">
+        <input id="roomSearch" placeholder="Search by room number">
+        <select id="roomTypeFilter">
+          <option value="">All types</option>
+          <option>SINGLE</option>
+          <option>DOUBLE</option>
+          <option>DELUXE</option>
+        </select>
+      </div>
+      <div id="roomList"></div>
+    </div>
+  </section>
+
+  <!-- ===================== GUESTS ===================== -->
+  <section id="guests" class="page">
+    <div class="page-head"><div><h1>Guests</h1><p class="muted">People who stay at the guest house</p></div></div>
+
+    <div class="panel">
+      <h3>Add a guest</h3>
+      <div id="guestError" class="form-error"></div>
+      <form id="guestForm" class="form" novalidate>
+        <label>Full name<input name="name" placeholder="e.g. Karthik Kumar"></label>
+        <label>Email<input name="email" type="email" placeholder="e.g. karthik@example.com"></label>
+        <label>Phone<input name="phone" placeholder="e.g. 9876543210"></label>
+        <label>Address (optional)<input name="address" placeholder="e.g. Chennai"></label>
+        <div class="form-actions"><button class="btn">Add Guest</button></div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <div class="toolbar">
+        <input id="guestSearch" placeholder="Search by name, email or phone">
+      </div>
+      <div id="guestList"></div>
+    </div>
+  </section>
+
+  <!-- ===================== AVAILABILITY ===================== -->
+  <section id="availability" class="page">
+    <div class="page-head"><div><h1>Room Availability</h1><p class="muted">Find rooms that are free for the whole stay</p></div></div>
+
+    <div class="panel">
+      <div id="availError" class="form-error"></div>
+      <form id="availForm" class="form inline" novalidate>
+        <label>Check-in date<input type="date" name="checkIn" id="availIn"></label>
+        <label>Check-out date<input type="date" name="checkOut" id="availOut"></label>
+        <div class="form-actions"><button class="btn">Check Availability</button></div>
+      </form>
+    </div>
+
+    <div id="availResult"></div>
+  </section>
+
+  <!-- ===================== NEW BOOKING ===================== -->
+  <section id="book" class="page">
+    <div class="page-head"><div><h1>New Booking</h1><p class="muted">Reserve a room for a guest</p></div></div>
+
+    <div id="bookWrap" class="two-col">
+      <div class="panel">
+        <div id="bookError" class="form-error"></div>
+        <form id="bookForm" class="form single" novalidate>
+          <label>Guest<select name="guestId" id="bookGuest"></select></label>
+          <label>Room<select name="roomId" id="bookRoom"></select></label>
+          <label>Check-in date<input type="date" name="checkInDate" id="bookIn"></label>
+          <label>Check-out date<input type="date" name="checkOutDate" id="bookOut"></label>
+          <label>Number of guests<input type="number" name="numberOfGuests" id="bookCount" min="1" value="1"></label>
+          <div class="form-actions"><button class="btn">Confirm Booking</button></div>
+        </form>
+      </div>
+
+      <div class="panel">
+        <h3>Booking summary</h3>
+        <dl class="details">
+          <div><dt>Room</dt><dd id="sumRoom">-</dd></div>
+          <div><dt>Rate per night</dt><dd id="sumRate">-</dd></div>
+          <div><dt>Nights</dt><dd id="sumNights">-</dd></div>
+          <div><dt>Estimated total</dt><dd class="strong" id="sumTotal">-</dd></div>
+        </dl>
+        <p class="muted small">This is only an estimate. The server calculates the final cost when the booking is saved.</p>
+      </div>
+    </div>
+
+    <div id="receipt" class="panel receipt hidden"></div>
+  </section>
+
+  <!-- ===================== BOOKINGS ===================== -->
+  <section id="bookings" class="page">
+    <div class="page-head">
+      <div><h1>Bookings</h1><p class="muted">All bookings, newest first</p></div>
+      <button class="btn" data-goto="book">+ New Booking</button>
+    </div>
+
+    <div class="panel">
+      <div class="toolbar">
+        <input id="bookingSearch" placeholder="Search by reference, guest or room">
+        <select id="bookingStatus">
+          <option value="">All statuses</option>
+          <option value="CONFIRMED">Confirmed</option>
+          <option value="CANCELLED">Cancelled</option>
+        </select>
+        <span class="muted small" id="bookingCount"></span>
+      </div>
+      <div id="bookingList"></div>
+    </div>
+  </section>
+
+  <!-- ===================== REPORT ===================== -->
+  <section id="report" class="page">
+    <div class="page-head"><div><h1>Monthly Occupancy Report</h1><p class="muted">Bookings that overlap the selected month are included</p></div></div>
+
+    <div class="panel">
+      <div class="form inline">
+        <label>Month<select id="repMonth"></select></label>
+        <label>Year<select id="repYear"></select></label>
+      </div>
+    </div>
+
+    <div id="reportResult"></div>
+  </section>
+</main>
+
+<!-- popup used for editing and confirmations -->
+<div id="modal" class="overlay hidden">
+  <div class="modal">
+    <div class="modal-head"><h3 id="modalTitle"></h3><button id="modalClose" aria-label="Close">&times;</button></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
